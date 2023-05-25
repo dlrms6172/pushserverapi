@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>FCM 토큰 서버 테스트</title>
+</head>
+<body>
+<button id="search">내 정보 조회</button>
+<p></p>
+<p></p>
+<p></p>
+<li> <strong>아이디</strong> :<p id="print_id">(내 정보 조회) 버튼을 눌러주세요.</p> </li>
+<li> <strong>토큰</strong> :<p id="print_token">(내 정보 조회) 버튼을 눌러주세요.</p> </li>
+
+<p>Push 메시지</p>
+
+<p id="title">title</p>
+
+<p id="body">body</p>
+
+<input type="text" id="user_id">
+
+<button id="login">로그인</button>
+<button id="logout">로그아웃</button>
+<p></p>
+<p></p>
+
+<p id="msg_title"> 메시지 타이틀</p>
+<p id="msg_body"> 메시지 바디</p>
+
+<p></p>
+<p></p>
+<button id="send"> 메시지 전송 단건 </button>
+
+<p></p>
+<button id="sendAll"> 메시지 전송 여러개 </button>
+msg
+<div id="msg">메시지</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-app.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-messaging.js";
+
+    const Config = {
+        apiKey: "AIzaSyDKt7kqWMLYzlIS07PM0EP0VQfIYuboAV4",
+        authDomain: "push-server-test-28616.firebaseapp.com",
+        projectId: "push-server-test-28616",
+        storageBucket: "push-server-test-28616.appspot.com",
+        messagingSenderId: "892251042492",
+        appId: "1:892251042492:web:f5a019a669dc64315216b9",
+        measurementId: "G-2KR1652P3W"
+    };
+
+    // firebase 초기화
+    const app = initializeApp(Config);
+
+    const messaging = getMessaging(app);
+
+    const login = document.getElementById("login");
+
+    const logout = document.getElementById("logout");
+
+    const search = document.getElementById("search");
+
+
+    // 토큰 출력
+    getToken(messaging,{
+        //웹 인증서
+        vapidKey:"BDi_r4npsKOzzBEEADqtzJPcrdlmrsn5NUQjXELm5M1uKpZcs-KcePh9j4IlX_9BP_ntIrAha_VHPYHy5MpwcAc"
+    }).then((currentToken) => {
+        if(currentToken){
+
+            console.log(currentToken);
+
+            localStorage.setItem("token",currentToken);
+
+        }else {
+            // Show permission request UI
+            console.log("No registration token available. Request permission to generate one.");
+            // ...
+        }
+    }).catch((err) => {
+        console.log("An error occurred while retrieving token. ", err);
+        // ...
+    });
+
+    // token
+    const token = localStorage.getItem("token");
+
+    // 로그인 시 토큰 저장
+     login.addEventListener('click', () => {
+
+                // user_id
+                const user_id = document.getElementById("user_id").value;
+                // 세션에 유저아이디 저장
+                localStorage.setItem("user_id",user_id);
+
+                //date
+                const today = new Date();
+
+                const year = today.getFullYear();
+                const month = ('0' + (today.getMonth() + 1)).slice(-2);
+                const day = ('0' + today.getDate()).slice(-2);
+                const hours = ('0' + today.getHours()).slice(-2);
+                const minutes = ('0' + today.getMinutes()).slice(-2);
+                const seconds = ('0' + today.getSeconds()).slice(-2);
+
+                const dateString = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+
+
+                // fetch api 호출 : id, token, reg_dt 전달
+                saveToken({user_id : user_id,  device_token : token, platform : 'android', reg_dt : dateString, use_yn : true, login_yn : true});
+
+                //data : token,userId,date
+                function saveToken(data) {
+                    fetch('http://localhost:8080/token/saveToken', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Success');
+                                console.log(data);
+
+                            } else {
+                                console.log('Failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Error ', error);
+                        });
+                }
+    });
+
+     //로그아웃 시 토큰 삭제
+    logout.addEventListener('click', () => {
+        getToken(messaging,{
+            //웹 인증서
+            vapidKey:"BDi_r4npsKOzzBEEADqtzJPcrdlmrsn5NUQjXELm5M1uKpZcs-KcePh9j4IlX_9BP_ntIrAha_VHPYHy5MpwcAc"
+        }).then((currentToken) => {
+            if(currentToken){
+
+                console.log(currentToken);
+                // user_id
+                const user_id = document.getElementById("user_id").value;
+
+                // fetch api 호출 : id, token 전달
+                delToken({user_id : user_id, device_token : currentToken, use_yn : false, login_yn : false});
+
+                //data : token,userId,date
+                function delToken(data) {
+                    fetch('http://localhost:8080/token/delToken', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Success');
+                                console.log(data);
+
+                            } else {
+                                console.log('Failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Error ', error);
+                        });
+                }
+
+
+            }else {
+                // Show permission request UI
+                console.log("No registration token available. Request permission to generate one.");
+                // ...
+            }
+        }).catch((err) => {
+            console.log("An error occurred while retrieving token. ", err);
+            // ...
+        });
+
+
+    });
+
+
+     const request_param = new URLSearchParams({
+         device_token : localStorage.getItem("token")
+     });
+
+     // 사용자 조회
+    search.addEventListener('click', () => {
+
+        getToken();
+
+        //저장된 정보 불러오기
+        function getToken() {
+            fetch('http://localhost:8080/token/getToken?' + request_param, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            }).then((response) => {
+                return response.json();
+            })
+                .then((json) => {
+
+                    console.log(json);
+                    const data = Object.values(json);
+                    const detailData = data[0];
+                    console.log(detailData["deviceToken"]);
+                    console.log(detailData["userId"]);
+
+
+
+                  document.getElementById("print_id").innerText=detailData["userId"];
+                  document.getElementById("print_token").innerText=detailData["deviceToken"];
+                })
+        }
+    });
+
+
+    const msg_request_param = new URLSearchParams({
+        code : "1"
+    });
+
+    // 메시지 조회
+    getMsg();
+
+    //저장된 정보 불러오기
+    function getMsg() {
+        fetch('http://localhost:8080/msg/getMsg?' + msg_request_param, {
+            method: 'GET',
+            headers: {
+                'Content-Type': "application/json"
+            }
+        }).then((response) => {
+            return response.json();
+        })
+            .then((json) => {
+
+                console.log(json);
+                const data = Object.values(json);
+                const detailData = data[0];
+                console.log(detailData["title"]);
+                console.log(detailData["body"]);
+                console.log(detailData["image"]);
+                console.log(detailData["data1"]);
+                console.log(detailData["data2"]);
+
+
+
+                document.getElementById("msg_title").innerText=detailData["title"];
+                document.getElementById("msg_body").innerText=detailData["body"];
+            })
+    }
+
+    //포그라운드 메시지 수신
+    onMessage(messaging, (payload) => {
+        console.log("Message received. ", payload);
+        // ...
+
+        document.getElementById("title").innerText=payload.notification.title;
+        document.getElementById("body").innerText=payload.notification.body;
+
+    });
+
+
+
+</script>
+<!--firebase config -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        });
+    }
+</script>
+</body>
+</html>

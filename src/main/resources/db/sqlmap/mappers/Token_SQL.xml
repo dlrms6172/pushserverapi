@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.push.api.client.mapper.TokenMapper">
+
+    <update id="updateToken" parameterType="HashMap">
+        update user_token
+        set reg_dt = #{reg_dt},
+            login_yn = #{login_yn},
+            use_yn = (select use_yn from user_use_yn where user_id = #{user_id})
+        where 1=1
+            and user_id = #{user_id}
+            and device_token = #{device_token}
+    </update>
+
+    <insert id="insertToken" parameterType="HashMap">
+        insert into user_token(user_id, device_token, user_type, platform, reg_dt, use_yn, login_yn)
+        values (#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{use_yn},#{login_yn})
+    </insert>
+
+    <insert id="insertUseYn" parameterType="HashMap">
+        insert into user_use_yn(user_id,use_yn)
+        values (#{user_id},#{use_yn}) on duplicate key update use_yn = #{use_yn}
+    </insert>
+
+    <update id="deleteToken" parameterType="HashMap">
+        update user_token
+        set use_yn = #{use_yn},
+            login_yn = #{login_yn}
+        where 1=1
+            and user_id = #{user_id}
+            and device_token = #{device_token}
+    </update>
+
+</mapper>
