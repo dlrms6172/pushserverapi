@@ -15,8 +15,11 @@ public interface TokenMapper {
     Integer insertToken(Map<String,Object> paramMap) throws Exception;
 
     // 알림 수신여부 저장
-    Integer insertUseYn(Map<String,Object> paramMap) throws Exception;
+    Integer insertNotificationStatus(Map<String,Object> paramMap) throws Exception;
 
     // 토큰 삭제
     Integer deleteToken(Map<String,Object> paramMap) throws Exception;
+
+    // 알림 수신여부 변경
+    Integer updateNotificationStatus(Map<String,Object> paramMap) throws Exception;
 }

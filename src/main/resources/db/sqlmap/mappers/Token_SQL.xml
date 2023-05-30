@@ -6,32 +6,45 @@
 <mapper namespace="com.example.push.api.client.mapper.TokenMapper">
 
     <update id="updateToken" parameterType="HashMap">
-        update user_token
+        update user_token_info
         set reg_dt = #{reg_dt},
-            login_yn = #{login_yn},
-            use_yn = (select use_yn from user_use_yn where user_id = #{user_id})
+            login_status = #{login_status},
+            notification_status = (select notification_status from user_notification_status where user_id = #{user_id})
         where 1=1
             and user_id = #{user_id}
             and device_token = #{device_token}
     </update>
 
     <insert id="insertToken" parameterType="HashMap">
-        insert into user_token(user_id, device_token, user_type, platform, reg_dt, use_yn, login_yn)
-        values (#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{use_yn},#{login_yn})
+        insert into user_token_info(service_key, user_id, device_token, user_type, platform, reg_dt, notification_status, login_status)
+        values (#{service_key},#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{notification_status},#{login_status})
     </insert>
 
-    <insert id="insertUseYn" parameterType="HashMap">
-        insert into user_use_yn(user_id,use_yn)
-        values (#{user_id},#{use_yn}) on duplicate key update use_yn = #{use_yn}
+    <insert id="insertNotificationStatus" parameterType="HashMap">
+        insert into user_notification_status(service_key,user_id,notification_status)
+        values (#{service_key},#{user_id},#{notification_status}) on duplicate key update notification_status = #{notification_status}
     </insert>
 
     <update id="deleteToken" parameterType="HashMap">
-        update user_token
-        set use_yn = #{use_yn},
-            login_yn = #{login_yn}
+        update user_token_info
+        set notification_status = #{notification_status},
+            login_status = #{login_status}
         where 1=1
+            and service_key = #{service_key}
             and user_id = #{user_id}
             and device_token = #{device_token}
+    </update>
+
+    <update id="updateNotificationStatus" parameterType="HashMap">
+        update
+            user_token_info as a,
+            user_notification_status as b
+        set
+            a.notification_status = #{notification_status},
+            b.notification_status = #{notification_status}
+        where 1=1
+            and a.user_id = #{user_id}
+            and b.user_id = #{user_id}
     </update>
 
 </mapper>

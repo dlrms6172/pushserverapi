@@ -25,12 +25,19 @@ public class TokenServiceImpl implements TokenService {
         updateToken = tokenMapper.updateToken(paramMap);
 
         if (updateToken == 0) {
-
+            // 사용자 정보 저장
             int insertToken = 0;
-            int insertUesYn = 0;
+
+            // 사용자 알림사용여부 저장
+            int insertNotificationStatus = 0;
 
             insertToken = tokenMapper.insertToken(paramMap);
-            insertUesYn = tokenMapper.insertUseYn(paramMap);
+            insertNotificationStatus = tokenMapper.insertNotificationStatus(paramMap);
+
+            result.put("insertToken",insertToken);
+            result.put("insertUesYn",insertNotificationStatus);
+        }else{
+            result.put("updateToken",updateToken);
         }
 
 
@@ -45,7 +52,19 @@ public class TokenServiceImpl implements TokenService {
         deleteToken = tokenMapper.deleteToken(paramMap);
 
 
-        result.put("result",deleteToken);
+        result.put("deleteToken",deleteToken);
+
+        return result;
+    }
+
+    @Override
+    public Map ntfcStng(Map<String, Object> paramMap) throws Exception {
+        result = new HashMap<>();
+
+        int updateNotificationStatus = 0;
+        updateNotificationStatus = tokenMapper.updateNotificationStatus(paramMap);
+
+        result.put("updateNotificationStatus",updateNotificationStatus);
 
         return result;
     }

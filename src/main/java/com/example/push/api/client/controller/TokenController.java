@@ -47,5 +47,13 @@ public class TokenController {
         return new ResponseEntity(body, headers, HttpStatus.OK);
     }
 
+    @PostMapping("/ntfcStng")
+    public ResponseEntity ntfcStng(@RequestBody Map<String, Object> paramMap) throws Exception {
+
+        body = tokenService.ntfcStng(paramMap);
+
+        return new ResponseEntity(body, headers, HttpStatus.OK);
+    }
+
 
 }
