@@ -16,13 +16,13 @@
     </update>
 
     <insert id="insertToken" parameterType="HashMap">
-        insert into user_token_info(service_key, user_id, device_token, user_type, platform, reg_dt, notification_status, login_status)
-        values (#{service_key},#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{notification_status},#{login_status})
+        insert into user_token_info(project_id, user_id, device_token, user_type, platform, reg_dt, notification_status, login_status)
+        values (#{project_id},#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{notification_status},#{login_status})
     </insert>
 
     <insert id="insertNotificationStatus" parameterType="HashMap">
-        insert into user_notification_status(service_key,user_id,notification_status)
-        values (#{service_key},#{user_id},#{notification_status}) on duplicate key update notification_status = #{notification_status}
+        insert into user_notification_status(project_id,user_id,notification_status)
+        values (#{project_id},#{user_id},#{notification_status}) on duplicate key update notification_status = #{notification_status}
     </insert>
 
     <update id="deleteToken" parameterType="HashMap">
@@ -30,7 +30,7 @@
         set notification_status = #{notification_status},
             login_status = #{login_status}
         where 1=1
-            and service_key = #{service_key}
+            and project_id = #{project_id}
             and user_id = #{user_id}
             and device_token = #{device_token}
     </update>

@@ -19,17 +19,16 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-app.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-messaging.js";
 
-    // push-server-test-sdk
+    // multiple-sdk
     const Config = {
-        apiKey: "AIzaSyDKt7kqWMLYzlIS07PM0EP0VQfIYuboAV4",
-        authDomain: "push-server-test-28616.firebaseapp.com",
-        projectId: "push-server-test-28616",
-        storageBucket: "push-server-test-28616.appspot.com",
-        messagingSenderId: "892251042492",
-        appId: "1:892251042492:web:f5a019a669dc64315216b9",
-        measurementId: "G-2KR1652P3W"
+        apiKey: "AIzaSyBOwcZiLbZdfb3_1-WOECs5xL5sEptn-EI",
+        authDomain: "multiple-bb7d7.firebaseapp.com",
+        projectId: "multiple-bb7d7",
+        storageBucket: "multiple-bb7d7.appspot.com",
+        messagingSenderId: "24465679384",
+        appId: "1:24465679384:web:dabfc26452ad7ff88c4f6d",
+        measurementId: "G-0489SV026H"
     };
-
 
     // firebase 초기화
     const app = initializeApp(Config);
@@ -44,10 +43,8 @@
     // 토큰 출력
     getToken(messaging,{
         //웹 인증서
-        // push-server-test
-        vapidKey:"BDi_r4npsKOzzBEEADqtzJPcrdlmrsn5NUQjXELm5M1uKpZcs-KcePh9j4IlX_9BP_ntIrAha_VHPYHy5MpwcAc"
         // multiple
-        //vapidKey:"BEIJsm-7IfV1kccjrmx-PYLtxoFcTx0lpcduHr3AmgHwuPHfkMkDshODMyJC-K60O8sfmTsGJglqCbGrpIQb4tk"
+        vapidKey:"BEIJsm-7IfV1kccjrmx-PYLtxoFcTx0lpcduHr3AmgHwuPHfkMkDshODMyJC-K60O8sfmTsGJglqCbGrpIQb4tk"
     }).then((currentToken) => {
         if(currentToken){
 
@@ -91,7 +88,7 @@
 
         // saveToken reqeust param
         saveToken({
-            project_id : 'dcmva',
+            project_id : 'ocmva',
             user_id : user_id,
             device_token : token,
             user_type : "체험회원",
@@ -139,7 +136,7 @@
 
                 // fetch api 호출 : id, token 전달
                 delToken({
-                    project_id : 'dcmva',
+                    project_id : 'ocmva',
                     user_id : user_id,
                     device_token : currentToken,
                     notification_status : false,

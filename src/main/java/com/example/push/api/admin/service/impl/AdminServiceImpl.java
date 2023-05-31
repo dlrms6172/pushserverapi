@@ -2,6 +2,8 @@ package com.example.push.api.admin.service.impl;
 
 import com.example.push.api.admin.mapper.AdminMapper;
 import com.example.push.api.admin.service.AdminService;
+import com.example.push.api.common.config.FirebaseConfig;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.MulticastMessage;
@@ -20,14 +22,23 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     AdminMapper adminMapper;
 
+    @Autowired
+    FirebaseConfig firebaseConfig;
+
     private Map<String, Object> result;
 
     @Override
     public Map sendNotification(Map<String, Object> paramMap) throws Exception {
         result = new HashMap<>();
 
+        // firebase 초기화
+        firebaseConfig.initialize();
+        //project_id
+        Map<String,Object> projectId = adminMapper.selectProjectId(paramMap);
+        FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
+
         // 토큰 조회
-        List<Map<String, Object>> userTokenList = adminMapper.userTokenList(paramMap);
+        List<Map<String, Object>> userTokenList = adminMapper.selectUserTokenList(paramMap);
 
         if (userTokenList != null) {
             List<String> settingTokenList = new ArrayList<>();
@@ -40,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
 
             BatchResponse response;
 
-            response = FirebaseMessaging.getInstance().sendMulticast(
+            response = FirebaseMessaging.getInstance(path).sendMulticast(
                     MulticastMessage.builder().
                             setNotification(
                                     Notification.builder()
@@ -53,14 +64,13 @@ public class AdminServiceImpl implements AdminService {
                             .addAllTokens(settingTokenList)
                             .build());
 
-            result.put("result",response.getSuccessCount());
+            result.put("result",response.getResponses());
+
 
         } else {
             result.put("result", "토큰이 없습니다.");
         }
 
-
-        result.put("userTokenList", userTokenList);
 
         return result;
     }

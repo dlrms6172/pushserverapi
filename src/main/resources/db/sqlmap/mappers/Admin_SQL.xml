@@ -5,13 +5,21 @@
 
 <mapper namespace="com.example.push.api.admin.mapper.AdminMapper">
     
-    <select id="userTokenList" resultType="resultMap">
+    <select id="selectUserTokenList" resultType="resultMap">
         select
             device_token
         from  user_token_info
         where 1=1
-            and service_key = #{service_key}
+            and project_id = #{project_id}
             and user_id = #{user_id}
+    </select>
+
+    <select id="selectProjectId" resultType="resultMap">
+        select
+            project_nm
+        from push_project
+        where 1=1
+            and project_id = #{project_id}
     </select>
     
 </mapper>

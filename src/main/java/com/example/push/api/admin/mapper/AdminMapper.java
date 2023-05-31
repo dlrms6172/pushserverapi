@@ -10,5 +10,9 @@ import java.util.Map;
 @Mapper
 public interface AdminMapper {
 
-    List<Map<String,Object>> userTokenList(Map<String,Object> paramMap) throws Exception;
+    // 유저 토큰리스트 선택
+    List selectUserTokenList(Map<String,Object> paramMap) throws Exception;
+
+    // 프로젝트ID 선택
+    Map selectProjectId(Map<String,Object> paramMap) throws Exception;
 }
