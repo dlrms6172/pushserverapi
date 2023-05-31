@@ -1,36 +1,49 @@
-CREATE TABLE `user_use_yn` (
-  `user_id` varchar(50) primary key COMMENT '유저계정',
-  `use_yn` boolean NOT NULL COMMENT '사용여부'
-);
+/**
+ * 푸시 프로젝트 테이블
+ * 푸시 서비스를 이용하는 프로젝트가 여러개일 수 있기 때문에 생성   
+ */
+CREATE TABLE `push_project` (
+  `project_id` varchar(50) primary key COMMENT '프로젝트 키',
+  `project_nm` varchar(50) NOT NULL COMMENT '프로젝트 명'
+)
 
-CREATE TABLE `user_token` (
-  `user_id` varchar(50) NOT NULL COMMENT '유저계정',
+insert into push_project values('dcmva','dev-cellsMathVerticalApp.json')
+
+/**
+ * 사용자 토큰 정보 테이블
+ * 디바이스 토큰을 primary key로 하려했으나, 디바이스 하나에 사용자가 여러명일 수 있기 때문에 설정할 수 없다.
+ * 중복삽입문제는 백엔드에서 설명하겠다.
+ */
+CREATE TABLE `user_token_info` (
+  `project_id` varchar(50) NOT NULL COMMENT '프로젝트 키',
+  `user_id` varchar(50) NOT NULL COMMENT '유저식별 값',
   `device_token` varchar(255) NOT NULL COMMENT 'fcm 토큰',
   `user_type` varchar(50) NOT NULL COMMENT '유저유형',
   `platform` varchar(20) NOT NULL COMMENT '디바이스 종류',
   `reg_dt` datetime NOT NULL COMMENT '등록일자',
-  `use_yn` boolean NOT NULL COMMENT '알림 사용 여부',
-  `login_yn` boolean NOT NULL COMMENT '로그인 여부'
+  `notification_status` boolean NOT NULL COMMENT '알림 여부 상태',
+  `login_status` boolean NOT NULL COMMENT '로그인 여부'
 );
 
-
-CREATE TABLE `topic` (
-  `topic_key` int(11) primary key AUTO_INCREMENT COMMENT '토픽키',
-  `topic_name_en` varchar(100) UNIQUE COMMENT '토픽명(영문)',
-  `topic_name_ko` varchar(100) UNIQUE COMMENT '토픽명(국문)',
-  `reg_dt` datetime NOT NULL COMMENT '등록일자'
+/**
+ * 사용자 알림 사용 여부 테이블
+ */
+CREATE TABLE `user_notification_status` (
+  `project_id` varchar(50) NOT NULL COMMENT '프로젝트 키',
+  `user_id` varchar(50) primary key COMMENT '유저식별 값',
+  `notification_status` boolean NOT NULL COMMENT '사용여부'
 );
 
-CREATE TABLE `topic_user_list` (
-  `topic_key` int(11) NOT NULL COMMENT '토픽키',
-  `user_id` varchar(50) NOT NULL COMMENT '유저계정',
-  `device_token` varchar(255) NOT NULL COMMENT 'fcm 토큰',
-  `reg_dt` datetime NOT NULL COMMENT '등록일자',
-  `use_yn` boolean NOT NULL DEFAULT true COMMENT '사용여부'
-);
-
+/**
+ * 알림 테이블
+ * 우선 안드로이드에서만 사용할 예정이므로 fcm 안드로이드 config칼럼만 생성해주었다.
+ */
 CREATE TABLE `notification` (
-  `cd` int(11) primary key AUTO_INCREMENT COMMENT '알림키',
+  `project_id` varchar(50) NOT NULL COMMENT '프로젝트 키',
+  `notification_cd` int(11) primary key AUTO_INCREMENT COMMENT '알림코드',
+  `first_class` varchar(50) NOT NULL COMMENT '대분류',
+  `second_class` varchar(50) NOT NULL COMMENT '중분류',
+  `third_class` varchar(50) NOT NULL COMMENT '소분류',
   `comn_title` varchar(50) NOT NULL COMMENT '공통 제목',
   `comn_body` varchar(100) NOT NULL COMMENT '공통 내용',
   `comn_image` varchar(100) NOT NULL COMMENT '공통 이미지',
@@ -44,8 +57,13 @@ CREATE TABLE `notification` (
   `reg_dt` datetime NOT NULL COMMENT '등록일자'
 );
 
-CREATE TABLE `user_notification_list` (
-  `cd` int(11) NOT NULL COMMENT '알림키',
-  `user_id` varchar(50) NOT NULL COMMENT '유저계정',
+/**
+ * 사용자 알림 내역
+ */
+CREATE TABLE `user_notification_history` (
+  `project_id` varchar(50) NOT NULL COMMENT '프로젝트 키',
+  `notification_cd` int(11) NOT NULL COMMENT '알림코드',
+  `user_id` varchar(50) NOT NULL COMMENT '유저식별 값',
   `recive_dt` datetime NOT NULL COMMENT '수신일자'
 );
+
