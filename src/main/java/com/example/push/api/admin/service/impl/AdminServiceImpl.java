@@ -31,46 +31,51 @@ public class AdminServiceImpl implements AdminService {
     public Map sendNotification(Map<String, Object> paramMap) throws Exception {
         result = new HashMap<>();
 
-        // firebase 초기화
-        firebaseConfig.initialize();
-        //project_id
-        Map<String,Object> projectId = adminMapper.selectProjectId(paramMap);
-        FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
 
-        // 토큰 조회
-        List<Map<String, Object>> userTokenList = adminMapper.selectUserTokenList(paramMap);
+        //project_id 조회
+        Map<String, Object> projectId = adminMapper.selectProjectId(paramMap);
 
-        if (userTokenList != null) {
-            List<String> settingTokenList = new ArrayList<>();
+        if (projectId != null) {
+            firebaseConfig.initialize();
+            FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
 
-            for (Map<String, Object> item : userTokenList) {
-                settingTokenList.add(item.get("deviceToken").toString());
+            // 토큰 조회
+            List<Map<String, Object>> userTokenList = adminMapper.selectUserTokenList(paramMap);
+
+            if (userTokenList != null) {
+                List<String> settingTokenList = new ArrayList<>();
+
+                for (Map<String, Object> item : userTokenList) {
+                    settingTokenList.add(item.get("deviceToken").toString());
+                }
+
+                // 알림 발송 로직
+
+                BatchResponse response;
+
+                response = FirebaseMessaging.getInstance(path).sendMulticast(
+                        MulticastMessage.builder().
+                                setNotification(
+                                        Notification.builder()
+                                                .setTitle("title")
+                                                .setBody("body")
+                                                .setImage("image")
+                                                .build())
+                                .putData("data1", "data1")
+                                .putData("data2", "data2")
+                                .addAllTokens(settingTokenList)
+                                .build());
+
+                result.put("result", response.getResponses());
+
+
+            } else {
+                result.put("result", "토큰이 존재하지 않습니다.");
             }
 
-            // Fcm service
-
-            BatchResponse response;
-
-            response = FirebaseMessaging.getInstance(path).sendMulticast(
-                    MulticastMessage.builder().
-                            setNotification(
-                                    Notification.builder()
-                                            .setTitle("title")
-                                            .setBody("body")
-                                            .setImage("image")
-                                            .build())
-                            .putData("data1", "data1")
-                            .putData("data2", "data2")
-                            .addAllTokens(settingTokenList)
-                            .build());
-
-            result.put("result",response.getResponses());
-
-
         } else {
-            result.put("result", "토큰이 없습니다.");
+            result.put("result", "프로젝트가 존재하지 않습니다.");
         }
-
 
         return result;
     }
