@@ -16,12 +16,31 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     TokenMapper tokenMapper;
 
+    /**
+     *
+     * @param paramMap
+     *
+     * project_id
+     * user_id
+     * device_token
+     * user_type
+     * platform
+     * reg_dt
+     * notification_status
+     * login_status
+     *
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map tokenSave(Map<String, Object> paramMap) throws Exception {
         result = new HashMap<>();
 
         // 기존 계정 유무 확인
         int updateToken = 0;
+        /**
+         *
+         */
         updateToken = tokenMapper.updateToken(paramMap);
 
         if (updateToken == 0) {

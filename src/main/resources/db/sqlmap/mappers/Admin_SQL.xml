@@ -12,6 +12,7 @@
         where 1=1
             and project_id = #{project_id}
             and user_id = #{user_id}
+            and notification_status = true
     </select>
 
     <select id="selectProjectId" resultType="resultMap">
@@ -21,5 +22,14 @@
         where 1=1
             and project_id = #{project_id}
     </select>
+
+    <insert id="insertNotificationHistory" parameterType="HashMap">
+        insert into user_notification_history(project_id,notification_cd,user_id,device_token,receive_dt)
+        values (#{project_id},#{notification_cd},#{user_id},#{device_token},#{receive_dt})
+    </insert>
+
+    <insert id="insertFailureLog" parameterType="HashMap">
+
+    </insert>
     
 </mapper>

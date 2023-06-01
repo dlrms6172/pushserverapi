@@ -4,17 +4,11 @@ import com.example.push.api.admin.mapper.AdminMapper;
 import com.example.push.api.admin.service.AdminService;
 import com.example.push.api.common.config.FirebaseConfig;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -29,14 +23,18 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Map sendNotification(Map<String, Object> paramMap) throws Exception {
-        result = new HashMap<>();
+        result = new LinkedHashMap<>();
 
 
         //project_id 조회
         Map<String, Object> projectId = adminMapper.selectProjectId(paramMap);
 
         if (projectId != null) {
+
+            // firebase 초기화
             firebaseConfig.initialize();
+
+            // 사용할 프로젝트 선택
             FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
 
             // 토큰 조회
@@ -50,9 +48,9 @@ public class AdminServiceImpl implements AdminService {
                 }
 
                 // 알림 발송 로직
-
                 BatchResponse response;
 
+                // path : 사용할 프로젝트
                 response = FirebaseMessaging.getInstance(path).sendMulticast(
                         MulticastMessage.builder().
                                 setNotification(
@@ -66,7 +64,29 @@ public class AdminServiceImpl implements AdminService {
                                 .addAllTokens(settingTokenList)
                                 .build());
 
-                result.put("result", response.getResponses());
+                List<SendResponse> responses = response.getResponses();
+                List<Map<String,Object>> succesToken = new ArrayList<>();
+                List<Map<String,Object>> failureToken = new ArrayList<>();
+
+                for (int i = 0; i < responses.size(); i++) {
+                    Map<String,Object> tokenMap = new LinkedHashMap<>();
+
+                    if (!responses.get(i).isSuccessful()) {
+                        tokenMap.put("token",settingTokenList.get(i));
+                        tokenMap.put("exception",response.getResponses().get(i).getException().getMessagingErrorCode());
+
+                        failureToken.add(tokenMap);
+                    } else {
+                        tokenMap.put("token",settingTokenList.get(i));
+
+                        succesToken.add(tokenMap);
+                    }
+                }
+
+                result.put("successCount", response.getSuccessCount());
+                result.put("failureCount", response.getFailureCount());
+                result.put("succesToken",succesToken);
+                result.put("failureToken",failureToken);
 
 
             } else {
@@ -76,6 +96,19 @@ public class AdminServiceImpl implements AdminService {
         } else {
             result.put("result", "프로젝트가 존재하지 않습니다.");
         }
+
+        return result;
+    }
+
+    @Override
+    public Map saveNotificationHistory(Map<String, Object> paramMap) throws Exception {
+        result = new LinkedHashMap<>();
+
+        int insertNotificationHistory = 0;
+        insertNotificationHistory = adminMapper.insertNotificationHistory(paramMap);
+
+
+        result.put("result",insertNotificationHistory);
 
         return result;
     }

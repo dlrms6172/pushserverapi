@@ -41,6 +41,8 @@
     const logout = document.getElementById("logout");
 
 
+
+
     // 토큰 출력
     getToken(messaging,{
         //웹 인증서
@@ -187,7 +189,50 @@
     //포그라운드 메시지 수신
     onMessage(messaging, (payload) => {
         console.log("Message received. ", payload);
-        // ...
+
+        //date
+        const today = new Date();
+
+        const year = today.getFullYear();
+        const month = ('0' + (today.getMonth() + 1)).slice(-2);
+        const day = ('0' + today.getDate()).slice(-2);
+        const hours = ('0' + today.getHours()).slice(-2);
+        const minutes = ('0' + today.getMinutes()).slice(-2);
+        const seconds = ('0' + today.getSeconds()).slice(-2);
+        const dateString = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+        // fetch api 호출 : id, token 전달
+        saveNotification({
+            project_id : 'dcmva',
+            notification_cd : 1,
+            user_id : localStorage.getItem("user_id"),
+            device_token : localStorage.getItem("token"),
+            receive_dt : dateString,
+        });
+
+        // fetch client/token/delete
+        function saveNotification(data) {
+            fetch('http://localhost:8080/push/admin/saveNotificationHistory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Success');
+                        console.log(data);
+
+                    } else {
+                        console.log('Failed');
+                    }
+                })
+                .catch(error => {
+                    console.log('Error ', error);
+                });
+        }
+
     });
 
 

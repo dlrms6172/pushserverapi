@@ -38,4 +38,12 @@ public class AdminController {
         return new ResponseEntity(body, headers, HttpStatus.OK);
     }
 
+    @PostMapping("/saveNotificationHistory")
+    public ResponseEntity saveNotificationHistory(@RequestBody Map<String, Object> paramMap) throws Exception {
+
+        body = adminService.saveNotificationHistory(paramMap);
+
+        return new ResponseEntity(body, headers, HttpStatus.OK);
+    }
+
 }
