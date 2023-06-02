@@ -17,18 +17,14 @@ public class TokenServiceImpl implements TokenService {
     TokenMapper tokenMapper;
 
     /**
-     *
-     * @param paramMap
-     *
-     * project_id
-     * user_id
-     * device_token
-     * user_type
-     * platform
-     * reg_dt
-     * notification_status
-     * login_status
-     *
+     * @param paramMap project_id
+     *                 user_id
+     *                 device_token
+     *                 user_type
+     *                 platform
+     *                 reg_dt
+     *                 notification_status
+     *                 login_status
      * @return
      * @throws Exception
      */
@@ -38,9 +34,6 @@ public class TokenServiceImpl implements TokenService {
 
         // 기존 계정 유무 확인
         int updateToken = 0;
-        /**
-         *
-         */
         updateToken = tokenMapper.updateToken(paramMap);
 
         if (updateToken == 0) {
@@ -53,10 +46,10 @@ public class TokenServiceImpl implements TokenService {
             insertToken = tokenMapper.insertToken(paramMap);
             insertNotificationStatus = tokenMapper.insertNotificationStatus(paramMap);
 
-            result.put("insertToken",insertToken);
-            result.put("insertUesYn",insertNotificationStatus);
-        }else{
-            result.put("updateToken",updateToken);
+            result.put("insertToken", insertToken);
+            result.put("insertUesYn", insertNotificationStatus);
+        } else {
+            result.put("updateToken", updateToken);
         }
 
 
@@ -71,7 +64,7 @@ public class TokenServiceImpl implements TokenService {
         deleteToken = tokenMapper.deleteToken(paramMap);
 
 
-        result.put("deleteToken",deleteToken);
+        result.put("deleteToken", deleteToken);
 
         return result;
     }
@@ -83,7 +76,7 @@ public class TokenServiceImpl implements TokenService {
         int updateNotificationStatus = 0;
         updateNotificationStatus = tokenMapper.updateNotificationStatus(paramMap);
 
-        result.put("updateNotificationStatus",updateNotificationStatus);
+        result.put("updateNotificationStatus", updateNotificationStatus);
 
         return result;
     }

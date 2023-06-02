@@ -25,6 +25,11 @@ CREATE TABLE `user_token_info` (
   `login_status` boolean NOT NULL COMMENT '로그인 여부'
 );
 
+INSERT INTO push.user_token_info
+(project_id, user_id, device_token, user_type, platform, reg_dt, notification_status, login_status)
+VALUES('dcmva',1,'12345','체험회원','android','2023-05-31 17:53:20.000',true,true);
+
+
 /**
  * 사용자 알림 사용 여부 테이블
  */
@@ -52,18 +57,7 @@ CREATE TABLE `notification` (
   `comn_data3` varchar(100) NOT NULL COMMENT '공통 데이터3',
   `comn_data4` varchar(100) NOT NULL COMMENT '공통 데이터4',
   `and_icon` varchar(100) NOT NULL COMMENT '안드로이드_아이콘',
-  `and_clicK_event` varchar(100) NOT NULL COMMENT '안드로이드_클릭이벤트',
+  `and_click_event` varchar(100) NOT NULL COMMENT '안드로이드_클릭이벤트',
   `and_sound` varchar(100) NOT NULL COMMENT '안드로이드_사운드',
   `reg_dt` datetime NOT NULL COMMENT '등록일자'
 );
-
-/**
- * 사용자 알림 내역
- */
-CREATE TABLE `user_notification_history` (
-  `project_id` varchar(50) NOT NULL COMMENT '프로젝트 키',
-  `notification_cd` int(11) NOT NULL COMMENT '알림코드',
-  `user_id` varchar(50) NOT NULL COMMENT '유저식별 값',
-  `recive_dt` datetime NOT NULL COMMENT '수신일자'
-);
-

@@ -11,6 +11,7 @@
             login_status = #{login_status},
             notification_status = (select notification_status from user_notification_status where user_id = #{user_id})
         where 1=1
+            and project_id = #{project_id}
             and user_id = #{user_id}
             and device_token = #{device_token}
     </update>
@@ -43,7 +44,9 @@
             a.notification_status = #{notification_status},
             b.notification_status = #{notification_status}
         where 1=1
+            and a.project_id = #{project_id}
             and a.user_id = #{user_id}
+            and b.project_id = #{project_id}
             and b.user_id = #{user_id}
     </update>
 

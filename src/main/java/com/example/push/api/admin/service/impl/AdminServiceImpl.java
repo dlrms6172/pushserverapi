@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
             // firebase 초기화
             firebaseConfig.initialize();
 
-            // 사용할 프로젝트 선택
+            // firebase를 사용할 프로젝트 선택
             FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
 
             // 토큰 조회
