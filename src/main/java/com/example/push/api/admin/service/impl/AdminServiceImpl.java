@@ -31,9 +31,6 @@ public class AdminServiceImpl implements AdminService {
 
         if (projectId != null) {
 
-            // firebase 초기화
-            firebaseConfig.initialize();
-
             // firebase를 사용할 프로젝트 선택
             FirebaseApp path = FirebaseApp.getInstance(projectId.get("projectNm").toString());
 
@@ -47,6 +44,15 @@ public class AdminServiceImpl implements AdminService {
                     settingTokenList.add(item.get("deviceToken").toString());
                 }
 
+                // 조회된 토큰 수
+                result.put("settingTokenCnt",settingTokenList.size());
+
+                // 알림 조회
+                Map<String,Object> notification = adminMapper.selectNotification(paramMap);
+
+                System.out.println(notification);
+
+
                 // 알림 발송 로직
                 BatchResponse response;
 
@@ -55,14 +61,19 @@ public class AdminServiceImpl implements AdminService {
                         MulticastMessage.builder().
                                 setNotification(
                                         Notification.builder()
-                                                .setTitle("title")
-                                                .setBody("body")
-                                                .setImage("image")
+                                                .setTitle(notification.get("title").toString())
+                                                .setBody(notification.get("body").toString())
+                                                .setImage(notification.get("image").toString())
                                                 .build())
-                                .putData("data1", "data1")
-                                .putData("data2", "data2")
+                                .putData("projectId", notification.get("projectId").toString())
+                                .putData("notificationCd", notification.get("notificationCd").toString())
                                 .addAllTokens(settingTokenList)
                                 .build());
+
+
+
+                result.put("sendTokenCnt",response.getSuccessCount());
+
 
                 List<SendResponse> responses = response.getResponses();
                 List<Map<String,Object>> succesToken = new ArrayList<>();

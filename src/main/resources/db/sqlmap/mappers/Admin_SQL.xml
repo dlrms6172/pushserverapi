@@ -11,7 +11,10 @@
         from  user_token_info
         where 1=1
             and project_id = #{project_id}
-            and user_id = #{user_id}
+            and user_id in
+            <foreach collection="user_ids" item="arr" index="index" open="(" separator="," close=")">
+                #{arr}
+            </foreach>
             and notification_status = true
     </select>
 
@@ -28,8 +31,19 @@
         values (#{project_id},#{notification_cd},#{user_id},#{device_token},#{receive_dt})
     </insert>
 
-    <insert id="insertFailureLog" parameterType="HashMap">
-
-    </insert>
+    <select id="selectNotification" resultType="resultMap">
+        select
+            project_id,
+            notification_cd,
+            title,
+            body,
+            image,
+            and_icon,
+            and_click_event,
+            and_sound
+        from notification
+        where 1=1
+            and notification_cd = #{notification_cd}
+    </select>
     
 </mapper>

@@ -16,6 +16,11 @@ public interface AdminMapper {
     // 프로젝트ID 선택
     Map selectProjectId(Map<String,Object> paramMap) throws Exception;
 
+    // 알림내역 조회
+    Map selectNotification(Map<String,Object> paramMap) throws Exception;
+
     // 알림내역 저장
     int insertNotificationHistory(Map<String,Object> paramMap) throws Exception;
+
+
 }
