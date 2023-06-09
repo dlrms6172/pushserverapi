@@ -2,7 +2,7 @@ package com.example.push.api.admin.service.impl;
 
 import com.example.push.api.admin.mapper.AdminMapper;
 import com.example.push.api.admin.service.AdminService;
-import com.example.push.api.common.config.FirebaseConfig;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.time.LocalDate.now;
+
 @Service
 public class AdminServiceImpl implements AdminService {
 
     @Autowired
     AdminMapper adminMapper;
 
-    @Autowired
-    FirebaseConfig firebaseConfig;
 
     private Map<String, Object> result;
 
@@ -66,7 +66,7 @@ public class AdminServiceImpl implements AdminService {
                                                 .setImage(notification.get("image").toString())
                                                 .build())
                                 .putData("projectId", notification.get("projectId").toString())
-                                .putData("notificationCd", notification.get("notificationCd").toString())
+                                .putData("notificationId", notification.get("notificationId").toString())
                                 .addAllTokens(settingTokenList)
                                 .build());
 
@@ -94,6 +94,7 @@ public class AdminServiceImpl implements AdminService {
                     }
                 }
 
+                result.put("now",now());
                 result.put("successCount", response.getSuccessCount());
                 result.put("failureCount", response.getFailureCount());
                 result.put("succesToken",succesToken);

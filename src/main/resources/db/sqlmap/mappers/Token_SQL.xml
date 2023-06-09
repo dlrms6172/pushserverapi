@@ -6,10 +6,10 @@
 <mapper namespace="com.example.push.api.client.mapper.TokenMapper">
 
     <update id="updateToken" parameterType="HashMap">
-        update user_token_info
-        set reg_dt = #{reg_dt},
+        update PUSH_USER_INFO
+        set reg_dttm = #{reg_dttm},
             login_status = #{login_status},
-            notification_status = (select notification_status from user_notification_status where user_id = #{user_id})
+            notification_status = (select notification_status from USER_NOTIFICATION_STATUS where user_id = #{user_id})
         where 1=1
             and project_id = #{project_id}
             and user_id = #{user_id}
@@ -17,17 +17,17 @@
     </update>
 
     <insert id="insertToken" parameterType="HashMap">
-        insert into user_token_info(project_id, user_id, device_token, user_type, platform, reg_dt, notification_status, login_status)
-        values (#{project_id},#{user_id},#{device_token},#{user_type},#{platform},#{reg_dt},#{notification_status},#{login_status})
+        insert into PUSH_USER_INFO(project_id, user_id, device_token, user_type, platform, reg_dttm, notification_status, login_status)
+        values (#{project_id},#{user_id},#{device_token},#{user_type},#{platform},#{reg_dttm},#{notification_status},#{login_status})
     </insert>
 
     <insert id="insertNotificationStatus" parameterType="HashMap">
-        insert into user_notification_status(project_id,user_id,notification_status)
-        values (#{project_id},#{user_id},#{notification_status}) on duplicate key update notification_status = #{notification_status}
+        insert into USER_NOTIFICATION_STATUS(project_id,user_id,notification_status,reg_dttm)
+        values (#{project_id},#{user_id},#{notification_status},#{reg_dttm}) on duplicate key update notification_status = #{notification_status}
     </insert>
 
     <update id="deleteToken" parameterType="HashMap">
-        update user_token_info
+        update PUSH_USER_INFO
         set notification_status = #{notification_status},
             login_status = #{login_status}
         where 1=1
@@ -38,8 +38,8 @@
 
     <update id="updateNotificationStatus" parameterType="HashMap">
         update
-            user_token_info as a,
-            user_notification_status as b
+            PUSH_USER_INFO as a,
+            USER_NOTIFICATION_STATUS as b
         set
             a.notification_status = #{notification_status},
             b.notification_status = #{notification_status}

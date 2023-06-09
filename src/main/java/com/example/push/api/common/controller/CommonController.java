@@ -1,14 +1,15 @@
 package com.example.push.api.common.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-public class CommonController {
+@RestController
+public class CommonController implements ErrorController {
 
-    @RequestMapping("/other")
-    public String view() {
 
-        return "other";
+
+    @Override
+    public String getErrorPath() {
+        return "/error";
     }
 }

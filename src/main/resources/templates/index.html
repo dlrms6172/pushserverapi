@@ -93,12 +93,12 @@
 
         // saveToken reqeust param
         saveToken({
-            project_id : 'dcmva',
+            project_id : 1,
             user_id : user_id,
             device_token : token,
             user_type : "체험회원",
             platform : 'android',
-            reg_dt : dateString,
+            reg_dttm : dateString,
             notification_status : true,
             login_status : true
         });
@@ -141,7 +141,7 @@
 
                 // fetch api 호출 : id, token 전달
                 delToken({
-                    project_id : 'dcmva',
+                    project_id : 1,
                     user_id : user_id,
                     device_token : currentToken,
                     notification_status : false,
@@ -203,11 +203,11 @@
 
         // fetch api 호출 : id, token 전달
         saveNotification({
-            project_id : 'dcmva',
-            notification_cd : 1,
+            project_id : 1,
+            notification_id : 1,
             user_id : localStorage.getItem("user_id"),
             device_token : localStorage.getItem("token"),
-            receive_dt : dateString,
+            reg_dttm : dateString,
         });
 
         // fetch client/token/delete

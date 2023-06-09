@@ -8,7 +8,7 @@
     <select id="selectUserTokenList" resultType="resultMap">
         select
             device_token
-        from  user_token_info
+        from  PUSH_USER_INFO
         where 1=1
             and project_id = #{project_id}
             and user_id in
@@ -21,29 +21,29 @@
     <select id="selectProjectId" resultType="resultMap">
         select
             project_nm
-        from push_project
+        from PUSH_PROJECT_INFO
         where 1=1
             and project_id = #{project_id}
     </select>
 
     <insert id="insertNotificationHistory" parameterType="HashMap">
-        insert into user_notification_history(project_id,notification_cd,user_id,device_token,receive_dt)
-        values (#{project_id},#{notification_cd},#{user_id},#{device_token},#{receive_dt})
+        insert into USER_NOTIFICATION_HISTORY(project_id,notification_id,user_id,device_token,reg_dttm)
+        values (#{project_id},#{notification_id},#{user_id},#{device_token},#{reg_dttm})
     </insert>
 
     <select id="selectNotification" resultType="resultMap">
         select
             project_id,
-            notification_cd,
+            notification_id,
             title,
             body,
             image,
             and_icon,
             and_click_event,
             and_sound
-        from notification
+        from NOTIFICATION_INFO
         where 1=1
-            and notification_cd = #{notification_cd}
+            and notification_id = #{notification_id}
     </select>
     
 </mapper>
